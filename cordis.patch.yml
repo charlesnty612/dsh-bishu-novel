@@ -1,0 +1,4 @@
+# dsh-bishu-novel bundle patch: mount the Bishu Novel engine as one host row.
+- insert:
+    - id: bishu-novel
+      name: 'dsh-bishu-novel'

@@ -8,6 +8,22 @@
 
 ---
 
+## 致谢 / Credits
+
+本项目是
+[alikon-art/DeterminFlow-Plugins](https://github.com/alikon-art/DeterminFlow-Plugins/tree/main/plugins/bishu-novel)
+中 `bishu-novel` 工作流引擎向 DeepSeek Harness（DSH）的**非官方移植插件**。
+
+- 原作工作台（DeterminFlow 引擎）：<https://github.com/alikon-art/DeterminFlow>
+- 原作插件（bishu-novel）：<https://github.com/alikon-art/DeterminFlow-Plugins/tree/main/plugins/bishu-novel>
+- 原作者：[alikon-art](https://github.com/alikon-art)
+
+**承袭范围**：本仓库中 7 条工作流定义（`build` / `character` / `story-plan` / `outline` / `mvp` / `polish` / `post-hoc`）、agent 提示词（`resources/agents.json`、`resources/prompts.json`）、脚本库（`resources/script-library/`）以及写作协作 skill 包（`resources/skill-bundles/writing-assistant/`）的设计与内容均来自原作；本仓库的贡献集中在 DSH 适配层——引擎移植（`lib/index.js`）、工作台 UI（`lib/client.js`）、HTTP 路由、持久化偏好与挂载声明（`cordis.patch.yml`）。
+
+**许可证**：原作 `DeterminFlow` 与 `DeterminFlow-Plugins` 均以 **GNU Affero General Public License v3**（AGPL v3）发布。本仓库根目录附带完整的 `LICENSE`（来自原作）与 `THIRD_PARTY_NOTICE.md`。本移植的发布遵循同条款；若您分发本插件或对其修改，请遵循 AGPL v3 条款。如有原作者的额外要求，请在本仓库开 issue 联系，我们会配合处理。
+
+---
+
 ## 1. 安装与挂载
 
 插件放在 DSH 的「workspace 插件目录」下，通过 `cordis.patch.yml` 把自己作为一行挂到宿主组合里：

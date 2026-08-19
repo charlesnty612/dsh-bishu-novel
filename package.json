@@ -1,6 +1,6 @@
 {
   "name": "dsh-bishu-novel",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Bishu Novel 纯本地小说生产工作流引擎（移植自 DeterminFlow bishu-novel）：build/character/story-plan/outline/mvp/polish/post-hoc 七条工作流 DAG（LLM agent 节点 + python 脚本节点 + 并行/条件/循环网关）+ bishu_* 工具 + writing-assistant skill。",
   "type": "module",
   "main": "lib/index.js",

@@ -448,6 +448,25 @@
         }
       }
     },
+    "novel-character-skeleton-add": {
+      "description": "角色骨架补档 — 仅针对点名角色追加骨架（append-only）",
+      "prompt_template": "novel-character-skeleton-add",
+      "tools": null,
+      "disallowed_tools": null,
+      "max_turns": 60,
+      "system_prompt_template": "",
+      "copy_main_workspace": false,
+      "available_for_sub_session": true,
+      "visible_skill_group_ids": [],
+      "visible_rule_group_ids": [],
+      "model_params": {
+        "thinking_enabled": true,
+        "reasoning_effort": "high",
+        "temperature": 0.7,
+        "top_p": 1,
+        "response_format": { "type": "json_object" }
+      }
+    },
     "novel-character-belief": {
       "description": "角色信念系统架构师：为全体角色构建信念生态系统，产出 character_beliefs.json",
       "prompt_template": "novel-character-belief",
@@ -469,6 +488,25 @@
         }
       }
     },
+    "novel-character-belief-add": {
+      "description": "角色信念补档 — 仅针对点名角色追加信念（append-only）",
+      "prompt_template": "novel-character-belief-add",
+      "tools": null,
+      "disallowed_tools": null,
+      "max_turns": 60,
+      "system_prompt_template": "",
+      "copy_main_workspace": false,
+      "available_for_sub_session": true,
+      "visible_skill_group_ids": [],
+      "visible_rule_group_ids": [],
+      "model_params": {
+        "thinking_enabled": true,
+        "reasoning_effort": "high",
+        "temperature": 0.7,
+        "top_p": 1,
+        "response_format": { "type": "json_object" }
+      }
+    },
     "novel-character-deep": {
       "description": "角色深层维度构建师：为单一角色构建欲望、恐惧、秘密、底线、创伤、矛盾、弧线，产出单个角色 JSON",
       "prompt_template": "novel-character-deep",
@@ -488,6 +526,25 @@
         "response_format": {
           "type": "json_object"
         }
+      }
+    },
+    "novel-character-deep-add": {
+      "description": "角色深层维度补档 — 逐角色生成 cache/character/{name}_deep.json",
+      "prompt_template": "novel-character-deep-add",
+      "tools": null,
+      "disallowed_tools": null,
+      "max_turns": 60,
+      "system_prompt_template": "",
+      "copy_main_workspace": false,
+      "available_for_sub_session": true,
+      "visible_skill_group_ids": [],
+      "visible_rule_group_ids": [],
+      "model_params": {
+        "thinking_enabled": true,
+        "reasoning_effort": "high",
+        "temperature": 0.7,
+        "top_p": 1,
+        "response_format": { "type": "json_object" }
       }
     },
     "novel-story-planner": {
@@ -530,6 +587,27 @@
         "response_format": {
           "type": "json_object"
         }
+      }
+    },
+    "novel-character-voice-add": {
+      "description": "角色声线补档 — 仅针对点名角色追加声线（append-only）",
+      "prompt_template": "novel-character-voice-add",
+      "tools": null,
+      "disallowed_tools": null,
+      "max_turns": 40,
+      "system_prompt_template": "",
+      "copy_main_workspace": false,
+      "available_for_sub_session": true,
+      "visible_skill_group_ids": [],
+      "visible_rule_group_ids": [],
+      "model_params": {
+        "thinking_enabled": true,
+        "reasoning_effort": "high",
+        "temperature": 0.3,
+        "top_p": 1,
+        "presence_penalty": 0,
+        "thinking_budget": null,
+        "response_format": { "type": "json_object" }
       }
     },
     "novel-style-profiler": {

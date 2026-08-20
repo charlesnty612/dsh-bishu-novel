@@ -626,6 +626,16 @@
           "enabled": true,
           "workflow_only": false,
           "order": 7
+        },
+        {
+          "name": "ncm_light_cards",
+          "content": "## 轻卡字段（嵌入同一 JSON 对象）\n\n你已经在维护「长线角色状态」。现在，在你产出的 JSON 对象里**额外加一个 `light_cards` 数组**——只为本章**新登场**的角色写条目。已有档案的角色不必重复登记。\n\n轻卡是写手能瞬间查到的速查卡。每个条目包含：\n\n- `character_name`：必须与上方 character_states 里某条 name 逐字一致\n- `voice_line`：一句话声线概括（≤ 30 字）\n- `bottom_line`：行为底线——这个角色绝不会做的事（一句话）\n- `relation_to_main`：与主要角色的关系，一句话\n- `canon_deviation`：本书偏离点（相对原著或既有设定的差异，无则写\"无\"）\n- `first_chapter`：登场章节号（4 位数字字符串，如\"0003\"），尚未登场就留空\n\n📌 同人书偏离点必填（哪怕只是\"无\"），非同人写\"无\"。\n\n示例：\n\n```json\n\"light_cards\": [\n  {\n    \"character_name\": \"林晚\",\n    \"voice_line\": \"句尾带刺，习惯半句话先断一拍\",\n    \"bottom_line\": \"绝不向曾抛下她的人低头\",\n    \"relation_to_main\": \"主角妹妹，十二年前失散\",\n    \"canon_deviation\": \"原作里是亲妹妹；本书设为表妹\",\n    \"first_chapter\": \"0005\"\n  }\n]\n```\n\n如果本章无新登场角色，输出空数组 `[]`。",
+          "token_estimate": 178,
+          "cache_break": false,
+          "cache_break_reason": "",
+          "enabled": true,
+          "workflow_only": false,
+          "order": 8
         }
       ]
     },
@@ -1540,6 +1550,16 @@
           "cache_break": false,
           "cache_break_reason": "",
           "content": "**禁止使用破折号「——」。用逗号或句号断句。**"
+        },
+        {
+          "name": "ncs_canon_deviations",
+          "content": "## 原著偏离清单（嵌入同一 JSON 对象）\n\n📌 这本书偏离了原著或通用设定（仅同人书有偏离；原创书填空数组）。\n\n如果这是同人书（基于已有 IP 的二次创作），请在产出的 JSON 对象里**额外加一个 `canon_deviations` 数组**，逐条列出本书相对原著的世界线/时间线/大事件偏离。每条 ≤ 80 字，3-8 条最佳。\n\n例如：\n\n```json\n\"canon_deviations\": [\n  \"时间线：故事从原作第3卷末尾开启，而非原作开篇\",\n  \"主角母亲在原作已死亡；本书中存活并担任药师\",\n  \"原作中的反派组织「黑鸦会」在本书中提前 50 章登场\",\n  \"力量体系：原作灵石可商用，本书改为灵石稀有且被国家垄断\"\n]\n```\n\n如果是原创书或无法判断，输出空数组 `[]`。引擎会自动跳过。",
+          "token_estimate": 0,
+          "cache_break": false,
+          "cache_break_reason": "",
+          "enabled": true,
+          "workflow_only": false,
+          "order": 4
         }
       ],
       "preambles": {}
@@ -1678,7 +1698,7 @@
         },
         {
           "name": "cv_output",
-          "content": "## JSON 输出格式\n\n只返回一个纯 JSON 对象，不要 Markdown 围栏，不要解释文字。\n\n{\n  \"characters\": [\n    {\n      \"name\": \"string（与角色档案中的 name 一致）\",\n      \"voice_positioning\": \"string（核心声音定位——一句话概括这个角色\\\"听起来像谁\\\"）\",\n      \"syntax_fingerprint\": {\n        \"sentence_preference\": \"string（长短句偏好）\",\n        \"catchphrases\": [\"string（口头禅或惯用词组）\"],\n        \"pause_habit\": \"string（停顿习惯）\",\n        \"dominant_sentence_type\": \"string（常用句式结构）\"\n      },\n      \"cognitive_bias\": \"string（认知偏差——他看世界时的滤镜是什么）\",\n      \"forbidden_speech\": [\"string（绝对不会说的句式类型）\"],\n      \"emotion_patterns\": {\n        \"anger\": \"string（愤怒时的语言变化）\",\n        \"nervous\": \"string（紧张时的语言变化）\",\n        \"lying\": \"string（撒谎/掩饰时的语言特征）\"\n      }\n    }\n  ]\n}\n\n🔴 JSON 完整性铁律：\n- 所有引号必须使用 ASCII 直引号 \"（U+0022）\n- 字符串值内不得包含未转义的换行符\n- 数组/对象的最后一个元素后不得有尾随逗号",
+          "content": "## JSON 输出格式\n\n只返回一个纯 JSON 对象，不要 Markdown 围栏，不要解释文字。\n\n{\n  \"characters\": [\n    {\n      \"name\": \"string（与角色档案中的 name 一致）\",\n      \"voice_positioning\": \"string（核心声音定位——一句话概括这个角色\\\"听起来像谁\\\"）\",\n      \"syntax_fingerprint\": {\n        \"sentence_preference\": \"string（长短句偏好）\",\n        \"catchphrases\": [\"string（口头禅或惯用词组）\"],\n        \"pause_habit\": \"string（停顿习惯）\",\n        \"dominant_sentence_type\": \"string（常用句式结构）\"\n      },\n      \"cognitive_bias\": \"string（认知偏差——他看世界时的滤镜是什么）\",\n      \"forbidden_speech\": [\"string（绝对不会说的句式类型）\"],\n      \"emotion_patterns\": {\n        \"anger\": \"string（愤怒时的语言变化）\",\n        \"nervous\": \"string（紧张时的语言变化）\",\n        \"lying\": \"string（撒谎/掩饰时的语言特征）\"\n      }\n    }\n  ]\n}\n\n🔴 JSON 完整性铁律：\n- 所有引号必须使用 ASCII 直引号 \"（U+0022）\n- 字符串值内不得包含未转义的换行符\n- 数组/对象的最后一个元素后不得有尾随逗号\n- 键名必须与上述 schema 逐字一致，禁止同义改写（如不要写成 core_voice / sentence_length / tension / pause / common_patterns）",
           "token_estimate": 371,
           "cache_break": false,
           "cache_break_reason": "",
@@ -1690,6 +1710,182 @@
           "name": "no_em_dash",
           "enabled": true,
           "order": 2,
+          "cache_break": false,
+          "cache_break_reason": "",
+          "content": "**禁止使用破折号「——」。用逗号或句号断句。**"
+        }
+      ],
+      "preambles": {}
+    },
+    "novel-character-skeleton-add": {
+      "description": "角色骨架补档 — 仅针对点名角色生成骨架补充（append-only），不重写已有角色",
+      "sections": [
+        {
+          "name": "ncs_add_role",
+          "content": "你是**角色骨架补档架构师**。\n\n你只为一个目的工作：**为用户点名的角色补全骨架档案**，并以 JSON 形式产出，引擎会将其 append 到现有 `cache/character/skeleton.json`，**绝不覆盖已有角色**。\n\n## 核心铁律\n\n1. 🔴 **只产出点名角色**——你产出的 `characters` 数组必须**逐字包含**【点名角色】列表中的每个名字，且只包含这些名字\n2. 🔴 **不重写已有角色**——你不需要为列表外的角色生成任何条目，引擎不会读取或合并它们\n3. 🔴 **保持 schema 一致**——产出 schema 与 `novel-character-skeleton` 完全一致（name、aliases、role、gender、age、world_position、world_anchor、relationships、essence）\n4. 🔴 **关系网络完整性**——新角色与已有角色的关系也得写（在 relationships 里 target 填对方名字）。引擎会保留老关系不动",
+          "token_estimate": 0,
+          "cache_break": false,
+          "cache_break_reason": "",
+          "enabled": true,
+          "workflow_only": false,
+          "order": 0
+        },
+        {
+          "name": "ncs_add_input",
+          "content": "## 输入\n\n- 【题材创意】\n{{premise}}\n\n- 【题材类型】\n{{genre}}\n\n- 【世界观基础】（已有世界观文件，供你参考风格）\n{{world_foundation}}\n\n- 【已有骨架】（cache/character/skeleton.json，**只读**——里面有的人物名你不要重复生成）\n{{skeleton_json}}\n\n- 【点名角色】**🔴 关键**：这一行是引擎从 `parameters.character_names` 注入的，告诉你必须为谁生成骨架：\n{{character_names_list}}",
+          "token_estimate": 0,
+          "cache_break": false,
+          "cache_break_reason": "",
+          "enabled": true,
+          "workflow_only": false,
+          "order": 1
+        },
+        {
+          "name": "ncs_add_schema",
+          "content": "## 产出格式\n\n只输出一个纯 JSON 对象，不要 Markdown 围栏，不要解释文字：\n\n```json\n{\n  \"characters\": [\n    {\n      \"name\": \"string（必填，与【点名角色】逐字一致）\",\n      \"true_name\": \"string\",\n      \"aliases\": [\"string\"],\n      \"role\": \"主角|对手|导师|重要配角|功能角色\",\n      \"gender\": \"string\",\n      \"age\": \"string\",\n      \"essence\": \"string（≤50字定调句）\",\n      \"world_position\": {\n        \"origin_class\": \"string\",\n        \"affiliation\": \"string\",\n        \"social_role\": \"string\",\n        \"stance_on_core_conflict\": \"string\"\n      },\n      \"world_anchor\": {\n        \"embodies_rule\": \"string\",\n        \"shaped_by_rule\": \"string\",\n        \"may_challenge_rule\": \"string\"\n      },\n      \"relationships\": [\n        {\n          \"target\": \"string（其他角色 name，含已有角色）\",\n          \"nature\": \"string\",\n          \"meaning_to_character\": \"string\",\n          \"hidden_tension\": \"string\",\n          \"default_attitude\": \"string\"\n        }\n      ]\n    }\n  ]\n}\n```\n\n## 关键约束\n\n- `characters.length` 必须**等于**【点名角色】的数量\n- 每个点名角色必须有独立条目，名字逐字一致\n- 不输出骨架外的任何角色\n- relationships 是新角色与**已有 + 新角色**之间的关系，按你的判断列 2-4 条即可\n\n🔴 JSON 完整性铁律：所有引号必须使用 ASCII 直引号，尾随逗号不允许。",
+          "token_estimate": 0,
+          "cache_break": false,
+          "cache_break_reason": "",
+          "enabled": true,
+          "workflow_only": false,
+          "order": 2
+        },
+        {
+          "name": "no_em_dash",
+          "enabled": true,
+          "order": 3,
+          "cache_break": false,
+          "cache_break_reason": "",
+          "content": "**禁止使用破折号「——」。用逗号或句号断句。**"
+        }
+      ],
+      "preambles": {}
+    },
+    "novel-character-belief-add": {
+      "description": "角色信念补档 — 仅针对点名角色生成核心信念（append-only）",
+      "sections": [
+        {
+          "name": "ncb_add_role",
+          "content": "你是**角色信念补档架构师**。\n\n你只为【点名角色】列表中的每个角色生成 `core_belief` / `belief_source` / `author_perspective` 三件套，引擎会 append 到 `cache/character/beliefs.json`，**绝不覆盖已有信念**。\n\n## 核心铁律\n\n1. 🔴 `beliefs` 数组**逐字包含**【点名角色】列表里的每个名字，且只包含这些名字\n2. 🔴 不为列表外的角色生成任何信念条目\n3. 🔴 字段不可缺失：每个条目必须有 character / core_belief / belief_source / author_perspective 四个字段",
+          "token_estimate": 0,
+          "cache_break": false,
+          "cache_break_reason": "",
+          "enabled": true,
+          "workflow_only": false,
+          "order": 0
+        },
+        {
+          "name": "ncb_add_input",
+          "content": "## 输入\n\n- 【题材创意】\n{{premise}}\n\n- 【题材类型】\n{{genre}}\n\n- 【已有骨架】\n{{skeleton_json}}\n\n- 【已有信念】（cache/character/beliefs.json，**只读**——里面已有的人物你不要重复生成）\n{{beliefs_json}}\n\n- 【点名角色】\n{{character_names_list}}",
+          "token_estimate": 0,
+          "cache_break": false,
+          "cache_break_reason": "",
+          "enabled": true,
+          "workflow_only": false,
+          "order": 1
+        },
+        {
+          "name": "ncb_add_schema",
+          "content": "## 产出格式\n\n```json\n{\n  \"beliefs\": [\n    {\n      \"character\": \"string（与点名角色逐字一致）\",\n      \"core_belief\": \"string（一句话）\",\n      \"belief_source\": \"string（信念的来源经历）\",\n      \"author_perspective\": \"right|wrong|ambiguous\"\n    }\n  ]\n}\n```\n\n- `beliefs.length` 必须**等于**【点名角色】的数量\n- 每个点名角色必须有独立条目\n- 不输出已有信念的角色（即使他们出现在骨架里）\n\n🔴 JSON 完整性铁律。",
+          "token_estimate": 0,
+          "cache_break": false,
+          "cache_break_reason": "",
+          "enabled": true,
+          "workflow_only": false,
+          "order": 2
+        },
+        {
+          "name": "no_em_dash",
+          "enabled": true,
+          "order": 3,
+          "cache_break": false,
+          "cache_break_reason": "",
+          "content": "**禁止使用破折号「——」。用逗号或句号断句。**"
+        }
+      ],
+      "preambles": {}
+    },
+    "novel-character-deep-add": {
+      "description": "角色深层维度补档 — 逐角色生成 cache/character/{name}_deep.json；同名文件已存在则保留",
+      "sections": [
+        {
+          "name": "ncd_add_role",
+          "content": "你是**角色深层维度补档构建师**。\n\n你只为【当前角色】生成 B/C/D 层（欲望、恐惧、秘密、底线、创伤、矛盾、弧线），引擎会保存为 `cache/character/{{name}}_deep.json`。同名文件已存在则保留——你不需要考虑该角色是否已存在，引擎会处理文件冲突。\n\n## 核心铁律\n\n1. 🔴 一次只为一个角色工作（当前名由 loop 变量注入）\n2. 🔴 schema 与 `novel-character-deep` 完全一致\n3. 🔴 character 字段必须是当前角色名（与 name 字段一致）",
+          "token_estimate": 0,
+          "cache_break": false,
+          "cache_break_reason": "",
+          "enabled": true,
+          "workflow_only": false,
+          "order": 0
+        },
+        {
+          "name": "ncd_add_input",
+          "content": "## 输入\n\n- 【题材创意】\n{{premise}}\n\n- 【题材类型】\n{{genre}}\n\n- 【骨架】\n{{skeleton_json}}\n\n- 【信念】\n{{beliefs_json}}\n\n- 【当前角色】\n{{name}}",
+          "token_estimate": 0,
+          "cache_break": false,
+          "cache_break_reason": "",
+          "enabled": true,
+          "workflow_only": false,
+          "order": 1
+        },
+        {
+          "name": "ncd_add_schema",
+          "content": "## 产出格式\n\n只输出一个纯 JSON 对象，不要 Markdown 围栏。Schema 与 `novel-character-deep` 一致：\n\n```json\n{\n  \"character\": \"string（与 {{name}} 逐字一致）\",\n  \"core_desire\": {\"surface_goal\": \"string\", \"deep_desire\": \"string\"},\n  \"deep_fear\": {\"fear\": \"string\", \"source\": \"string\"},\n  \"secret\": {\n    \"content\": \"string\",\n    \"who_knows\": [\"string\"],\n    \"who_doesnt_know_but_should\": [\"string\"],\n    \"exposure_consequence\": \"string\"\n  },\n  \"bottom_line\": {\"condition\": \"string\", \"source\": \"string\", \"reaction_when_crossed\": \"string\"},\n  \"key_trauma\": {\n    \"wound\": \"string\",\n    \"trigger\": \"string\",\n    \"stress_response\": \"string\",\n    \"impact_on_behavior\": \"string\"\n  },\n  \"internal_contradiction\": {\n    \"conflicting_elements\": \"string\",\n    \"source\": \"string\",\n    \"possible_direction\": \"string\"\n  },\n  \"arc_potential\": {\n    \"growth_direction\": \"string\",\n    \"corruption_direction\": \"string\",\n    \"key_choice\": \"string\"\n  }\n}\n```\n\n🔴 JSON 完整性铁律。",
+          "token_estimate": 0,
+          "cache_break": false,
+          "cache_break_reason": "",
+          "enabled": true,
+          "workflow_only": false,
+          "order": 2
+        },
+        {
+          "name": "no_em_dash",
+          "enabled": true,
+          "order": 3,
+          "cache_break": false,
+          "cache_break_reason": "",
+          "content": "**禁止使用破折号「——」。用逗号或句号断句。**"
+        }
+      ],
+      "preambles": {}
+    },
+    "novel-character-voice-add": {
+      "description": "角色声线补档 — 仅针对点名角色生成声线条目（append-only）",
+      "sections": [
+        {
+          "name": "cv_add_role",
+          "content": "你是**角色声线补档分析师**。\n\n你只从【已有骨架】（含新角色与老角色）与【已有信念】中**提取**点名角色的声线特征。引擎会把你的产出 append 到 `cache/character/voice.json`，**绝不覆盖已有声线**。\n\n## 核心铁律\n\n1. 🔴 `characters` 数组**逐字包含**【点名角色】列表里的每个名字，且只包含这些名字\n2. 🔴 不为列表外的角色生成任何声线条目\n3. 🔴 schema 与 `novel-character-voice` 完全一致",
+          "token_estimate": 0,
+          "cache_break": false,
+          "cache_break_reason": "",
+          "enabled": true,
+          "workflow_only": false,
+          "order": 0
+        },
+        {
+          "name": "cv_add_input",
+          "content": "## 输入\n\n- 【骨架】（含全部新老角色）\n{{skeleton_json}}\n\n- 【信念】（含全部新老角色）\n{{beliefs_json}}\n\n- 【已有声线】（cache/character/voice.json，**只读**——已有条目不要重复生成）\n{{voice_json}}\n\n- 【点名角色】\n{{character_names_list}}",
+          "token_estimate": 0,
+          "cache_break": false,
+          "cache_break_reason": "",
+          "enabled": true,
+          "workflow_only": false,
+          "order": 1
+        },
+        {
+          "name": "cv_add_schema",
+          "content": "## 产出格式\n\n```json\n{\n  \"characters\": [\n    {\n      \"name\": \"string（与点名角色逐字一致）\",\n      \"voice_positioning\": \"string（一句话核心声音定位）\",\n      \"syntax_fingerprint\": {\n        \"sentence_preference\": \"string\",\n        \"catchphrases\": [\"string\"],\n        \"pause_habit\": \"string\",\n        \"dominant_sentence_type\": \"string\"\n      },\n      \"cognitive_bias\": \"string\",\n      \"forbidden_speech\": [\"string\"],\n      \"emotion_patterns\": {\n        \"anger\": \"string\",\n        \"nervous\": \"string\",\n        \"lying\": \"string\"\n      }\n    }\n  ]\n}\n```\n\n- `characters.length` 必须**等于**【点名角色】的数量\n- 字段名严格按 schema（不要写成 core_voice / sentence_length / tension / pause / common_patterns 等同义改写）\n- 信息不足的字段填「待补充」\n\n🔴 JSON 完整性铁律。",
+          "token_estimate": 0,
+          "cache_break": false,
+          "cache_break_reason": "",
+          "enabled": true,
+          "workflow_only": false,
+          "order": 2
+        },
+        {
+          "name": "no_em_dash",
+          "enabled": true,
+          "order": 3,
           "cache_break": false,
           "cache_break_reason": "",
           "content": "**禁止使用破折号「——」。用逗号或句号断句。**"
@@ -1987,7 +2183,7 @@
         },
         {
           "name": "nco_outputs",
-          "content": "## 产出\n\n直接输出一个纯 JSON 对象（单文件），不要 Markdown 围栏，不要解释文字。引擎自动保存。\n\n```json\n{\n  \"chapter\": 1,\n  \"world_diff\": {\n    \"new_locations\": [\n      {\"location\": \"城西陈家铁铺\", \"evidence\": \"正文第3段\", \"note\": \"world_state 中无此记录\"}\n    ],\n    \"new_factions\": [\n      {\"faction\": \"黑鸦会\", \"evidence\": \"正文第7段\", \"note\": \"前文从未提及\"}\n    ],\n    \"rule_changes\": [\n      {\"change\": \"灵气可被凡铁承载\", \"evidence\": \"正文第12段\", \"note\": \"world_foundation 规定灵气只能附着于灵器级材料\"}\n    ],\n    \"world_class_items\": [\n      {\"item\": \"幽壤之匣\", \"evidence\": \"正文第8段\", \"note\": \"描述为可改换一方水土的属性，影响超出持有者个人范围\"}\n    ],\n    \"conflicts\": [\n      {\"existing_fact\": \"world_state 记载吏部已于第3章被清洗\", \"body_claim\": \"正文第5段提及吏部侍郎仍在批阅奏章\", \"note\": \"与已记录事实矛盾\"}\n    ]\n  },\n  \"story_diff\": {\n    \"landed\": [\n      {\"planned\": \"主角被公司开除\", \"evidence\": \"正文第2-5段\"}\n    ],\n    \"missed\": [\n      {\"planned\": \"对手在会议上替主角挡回质询\", \"note\": \"正文全文搜索无此事件\"}\n    ],\n    \"deviated\": [\n      {\"planned\": \"主角签了合同\", \"actual\": \"正文中主角看完合同后撕掉了\", \"evidence\": \"正文第15段\"}\n    ],\n    \"unplanned_narrative\": [\n      {\"event\": \"主角在巷子里遇到卖旧书的老头\", \"evidence\": \"正文第9段\", \"note\": \"导演未提过此事件\"}\n    ]\n  },\n  \"character_diff\": {\n    \"new_characters\": [\n      {\"name\": \"老刘\", \"role\": \"税吏\", \"evidence\": \"正文第4段\", \"note\": \"有名字有动作，非纯路人\"}\n    ],\n    \"relationship_changes\": [\n      {\"pair\": \"主角 → 赵宇\", \"change\": \"信任降低\", \"evidence\": \"正文第11段\", \"current_state\": \"character_state 中信任评分为 6\"}\n    ],\n    \"state_changes\": [\n      {\"character\": \"主角\", \"field\": \"当前位置\", \"from\": \"出租屋\", \"to\": \"城西废弃厂房\", \"evidence\": \"正文末段\"}\n    ],\n    \"character_items\": [\n      {\"character\": \"主角\", \"item\": \"铜钥匙\", \"action\": \"获得\", \"evidence\": \"正文第14段\", \"note\": \"私人物品\"}\n    ],\n    \"lifecycle_anomalies\": [\n      {\"character\": \"王胖子\", \"status\": \"character_minor 标记为 dead（第3章）\", \"anomaly\": \"正文第18段有人提到他昨天还来收过租\", \"evidence\": \"正文第18段\"}\n    ]\n  },\n  \"unplanned_events\": [\n    {\"id\": 1, \"summary\": \"主角巷遇卖书老头并进行三句对话\", \"evidence\": \"正文第9段\", \"involves\": [\"主角\", \"无名老头\"]}\n  ]\n}\n```\n\n🔴 JSON 完整性铁律：\n- 所有引号必须使用 ASCII 直引号 \"（U+0022）\n- 字符串值内不得包含未转义的换行符\n- 数组/对象的最后一个元素后不得有尾随逗号",
+          "content": "## 产出\n\n直接输出一个纯 JSON 对象（单文件），不要 Markdown 围栏，不要解释文字。引擎自动保存。\n\n📌 **顶层 `canon_deviations` 数组**：本章相对原著/既有设定的偏离条目。仅同人书有偏离；原创书填 `[]`。每条 ≤ 80 字，0-4 条最佳。引擎会自动追加到 `meta/canon_deviations.md`（append-only），下游写手会读到。\n\n```json\n{\n  \"chapter\": 1,\n  \"world_diff\": {\n    \"new_locations\": [\n      {\"location\": \"城西陈家铁铺\", \"evidence\": \"正文第3段\", \"note\": \"world_state 中无此记录\"}\n    ],\n    \"new_factions\": [\n      {\"faction\": \"黑鸦会\", \"evidence\": \"正文第7段\", \"note\": \"前文从未提及\"}\n    ],\n    \"rule_changes\": [\n      {\"change\": \"灵气可被凡铁承载\", \"evidence\": \"正文第12段\", \"note\": \"world_foundation 规定灵气只能附着于灵器级材料\"}\n    ],\n    \"world_class_items\": [\n      {\"item\": \"幽壤之匣\", \"evidence\": \"正文第8段\", \"note\": \"描述为可改换一方水土的属性，影响超出持有者个人范围\"}\n    ],\n    \"conflicts\": [\n      {\"existing_fact\": \"world_state 记载吏部已于第3章被清洗\", \"body_claim\": \"正文第5段提及吏部侍郎仍在批阅奏章\", \"note\": \"与已记录事实矛盾\"}\n    ]\n  },\n  \"story_diff\": {\n    \"landed\": [\n      {\"planned\": \"主角被公司开除\", \"evidence\": \"正文第2-5段\"}\n    ],\n    \"missed\": [\n      {\"planned\": \"对手在会议上替主角挡回质询\", \"note\": \"正文全文搜索无此事件\"}\n    ],\n    \"deviated\": [\n      {\"planned\": \"主角签了合同\", \"actual\": \"正文中主角看完合同后撕掉了\", \"evidence\": \"正文第15段\"}\n    ],\n    \"unplanned_narrative\": [\n      {\"event\": \"主角在巷子里遇到卖旧书的老头\", \"evidence\": \"正文第9段\", \"note\": \"导演未提过此事件\"}\n    ]\n  },\n  \"character_diff\": {\n    \"new_characters\": [\n      {\"name\": \"老刘\", \"role\": \"税吏\", \"evidence\": \"正文第4段\", \"note\": \"有名字有动作，非纯路人\"}\n    ],\n    \"relationship_changes\": [\n      {\"pair\": \"主角 → 赵宇\", \"change\": \"信任降低\", \"evidence\": \"正文第11段\", \"current_state\": \"character_state 中信任评分为 6\"}\n    ],\n    \"state_changes\": [\n      {\"character\": \"主角\", \"field\": \"当前位置\", \"from\": \"出租屋\", \"to\": \"城西废弃厂房\", \"evidence\": \"正文末段\"}\n    ],\n    \"character_items\": [\n      {\"character\": \"主角\", \"item\": \"铜钥匙\", \"action\": \"获得\", \"evidence\": \"正文第14段\", \"note\": \"私人物品\"}\n    ],\n    \"lifecycle_anomalies\": [\n      {\"character\": \"王胖子\", \"status\": \"character_minor 标记为 dead（第3章）\", \"anomaly\": \"正文第18段有人提到他昨天还来收过租\", \"evidence\": \"正文第18段\"}\n    ]\n  },\n  \"unplanned_events\": [\n    {\"id\": 1, \"summary\": \"主角巷遇卖书老头并进行三句对话\", \"evidence\": \"正文第9段\", \"involves\": [\"主角\", \"无名老头\"]}\n  ]\n}\n```\n\n🔴 JSON 完整性铁律：\n- 所有引号必须使用 ASCII 直引号 \"（U+0022）\n- 字符串值内不得包含未转义的换行符\n- 数组/对象的最后一个元素后不得有尾随逗号",
           "token_estimate": 666,
           "cache_break": false,
           "cache_break_reason": "",

@@ -6,15 +6,23 @@
   character: 读取角色缓存目录下 skeleton.json + beliefs.json + *_deep.json，合并渲染
   voice:     读取 voice.json，渲染为角色声音锚 MD
 
+可选 `--merge`：
+  对 character / voice 模式开启合并渲染。
+  已有角色段落（按 ## 标题解析）逐字节保留；只追加新角色段落。
+  适用于 character-add 工作流——保护用户手改。
+  首行 h1 标题在已有文件里保留首个；新文件按正常规则生成。
+
 用法:
   python json-to-md.py --mode tree --input-dir {book_dir}/world --output {book_dir}/meta/world_foundation.md --title "世界观基础"
   python json-to-md.py --mode character --book-dir {book_dir} --output {book_dir}/meta/character_profiles.md
   python json-to-md.py --mode voice --voice-json cache/character/voice.json --output meta/character_voice.md
+  python json-to-md.py --mode character --book-dir {book_dir} --output {book_dir}/meta/character_profiles.md --merge
 """
 
 import argparse
 import json
 import os
+import re
 import sys
 
 
@@ -125,6 +133,14 @@ def render_character(name: str, true_name: str, aliases: list, skeleton: dict, b
     parts.append(_h(3, "内在构造"))
     # 信念匹配：直接用 name
     b = next((b for b in beliefs if b.get("character") == name), {})
+    if not b:
+        # 角色在 beliefs.json 中缺失（beliefs 环节可能漏生成该角色）：
+        # 不阻断渲染，但向 stderr 打警告，避免「—」静默吞掉漏项（仿照 voice 模式空栏告警）。
+        print(
+            f"[json-to-md] 警告：角色「{name}」缺少信念数据"
+            "（beliefs 环节可能漏生成），核心信念栏已留空",
+            file=sys.stderr,
+        )
     parts.append(_h(4, "核心信念"))
     parts.append(f"- 信念：{b.get('core_belief', '—')}")
     parts.append(f"- 来源：{b.get('belief_source', '—')}")
@@ -199,30 +215,56 @@ def render_character(name: str, true_name: str, aliases: list, skeleton: dict, b
 #  voice 模式：角色声音锚渲染
 # ═══════════════════════════════════════════════════════════
 
+def pick(d: dict, *keys):
+    """返回 dict 中第一个存在且非空的值；均不存在或为空时返回 ""。
+
+    用于对 LLM 同义改写字段名做归一化兜底，如 voice_positioning | core_voice。
+    """
+    if not isinstance(d, dict):
+        return ""
+    for k in keys:
+        v = d.get(k)
+        if v is not None and v != "" and v != [] and v != {}:
+            return v
+    return ""
+
+
 def render_voice_char(char: dict) -> str:
-    """将单个角色的声线 JSON 渲染为 Markdown section。"""
+    """将单个角色的声线 JSON 渲染为 Markdown section。
+
+    字段名兼容：LLM 输出可能把 schema 键名同义改写
+    （voice_positioning→core_voice、sentence_preference→sentence_length、
+     pause_habit→pause、dominant_sentence_type→common_patterns、
+     nervous→tension），读取时按别名二选一兜底。
+    """
     name = char.get("name", "未知")
     parts = [_h(2, name)]
 
-    vp = char.get("voice_positioning", "")
+    vp = pick(char, "voice_positioning", "core_voice")
     if vp:
         parts.append(_h(3, "核心声音定位"))
         parts.append(_p(vp))
 
     sf = char.get("syntax_fingerprint", {})
-    if sf:
+    if sf and (pick(sf, "sentence_preference", "sentence_length")
+               or sf.get("catchphrases")
+               or pick(sf, "pause_habit", "pause")
+               or pick(sf, "dominant_sentence_type", "common_patterns")):
         parts.append(_h(3, "句法指纹"))
-        if sf.get("sentence_preference"):
-            parts.append(f"- 长短句偏好：{sf['sentence_preference']}")
+        sentence_pref = pick(sf, "sentence_preference", "sentence_length")
+        if sentence_pref:
+            parts.append(f"- 长短句偏好：{sentence_pref}")
         catchphrases = sf.get("catchphrases", [])
         if catchphrases:
             parts.append(f"- 口头禅：{'、'.join(catchphrases)}")
-        if sf.get("pause_habit"):
-            parts.append(f"- 停顿习惯：{sf['pause_habit']}")
-        if sf.get("dominant_sentence_type"):
-            parts.append(f"- 常用句式：{sf['dominant_sentence_type']}")
+        pause_habit = pick(sf, "pause_habit", "pause")
+        if pause_habit:
+            parts.append(f"- 停顿习惯：{pause_habit}")
+        dominant_type = pick(sf, "dominant_sentence_type", "common_patterns")
+        if dominant_type:
+            parts.append(f"- 常用句式：{dominant_type}")
 
-    cb = char.get("cognitive_bias", "")
+    cb = pick(char, "cognitive_bias")
     if cb:
         parts.append(_h(3, "认知偏差"))
         parts.append(_p(cb))
@@ -234,14 +276,17 @@ def render_voice_char(char: dict) -> str:
             parts.append(f"- {item}")
 
     ep = char.get("emotion_patterns", {})
-    if ep:
+    if ep and (pick(ep, "anger") or pick(ep, "nervous", "tension") or pick(ep, "lying")):
         parts.append(_h(3, "情绪表达模式"))
-        if ep.get("anger"):
-            parts.append(f"- 愤怒时：{ep['anger']}")
-        if ep.get("nervous"):
-            parts.append(f"- 紧张时：{ep['nervous']}")
-        if ep.get("lying"):
-            parts.append(f"- 撒谎时：{ep['lying']}")
+        anger = pick(ep, "anger")
+        if anger:
+            parts.append(f"- 愤怒时：{anger}")
+        nervous = pick(ep, "nervous", "tension")
+        if nervous:
+            parts.append(f"- 紧张时：{nervous}")
+        lying = pick(ep, "lying")
+        if lying:
+            parts.append(f"- 撒谎时：{lying}")
 
     return "\n\n".join(parts)
 
@@ -258,6 +303,11 @@ def main():
     parser.add_argument("--voice-json", default="", help="voice.json 路径（voice 模式）")
     parser.add_argument("--output", required=True, help="输出 Markdown 文件路径")
     parser.add_argument("--title", default="角色档案", help="一级标题")
+    parser.add_argument(
+        "--merge",
+        action="store_true",
+        help="合并模式：仅对 character / voice 模式有效；已有角色段落逐字节保留，仅追加新角色段落（character-add 工作流使用，保护用户手改）",
+    )
     args = parser.parse_args()
 
     sections = []
@@ -356,14 +406,111 @@ def main():
                 sys.exit(1)
 
         for char in characters:
-            sections.append(render_voice_char(char))
+            section = render_voice_char(char)
+            sections.append(section)
+            # 空栏告警：角色所有内容栏均为空时提示，避免静默失败。
+            # 仅统计 MD 正文（排除所有 # 标题行），任一内容行存在即视为非空。
+            body_lines = [ln for ln in section.splitlines() if ln and not ln.startswith("#")]
+            if not body_lines:
+                cname = char.get("name", "未知")
+                print(
+                    f"[json-to-md] 警告：角色「{cname}」的 voice.json 内容栏全为空"
+                    "（可能字段名与 schema 不符或值缺失），声线栏已留空",
+                    file=sys.stderr,
+                )
 
     if not sections:
         print("[json-to-md] 错误：没有成功渲染任何内容", file=sys.stderr)
         sys.exit(1)
 
-    output = f"# {args.title}\n\n" + "\n\n---\n\n".join(sections) + "\n"
-    output = output.replace('——', '，')
+    new_output = f"# {args.title}\n\n" + "\n\n---\n\n".join(sections) + "\n"
+    new_output = new_output.replace('——', '，')
+
+    # 合并模式：仅对 character / voice 模式生效。
+    # 读取已有输出，按 ## 标题切 section：已有同名 section 整段保留字节（绝对不重写），
+    # 仅追加新 section；首行 h1 标题在已有文件里保留首个。
+    # 关键约定：每个 section 切片从 "## " 起点到下一个 "## " 起点（含两 section 之间的 \n\n---\n\n 分隔符），
+    # 这样已有的 section 按出现顺序 emit 即可完整保留原文件的字节布局；
+    # 只有在「已有最后一节 → 新第一节」之间需要补 SEP。
+    if args.merge and args.mode in ("character", "voice") and os.path.exists(args.output):
+        existing = open(args.output, "r", encoding="utf-8").read()
+
+        existing_ranges = []
+        for m in re.finditer(r"(?m)^## ", existing):
+            existing_ranges.append(m.start())
+        new_ranges = []
+        for m in re.finditer(r"(?m)^## ", new_output):
+            new_ranges.append(m.start())
+
+        # 已有 sections：每个 slice = ## 起点 → 下一个 ## 起点（最后一节到 EOF）
+        # 这样 slice 内已经包含「\n\n---\n\n」分隔符（最后一节除外）。
+        existing_sections = []
+        existing_titles_set = set()
+        for i, s in enumerate(existing_ranges):
+            e = existing_ranges[i + 1] if i + 1 < len(existing_ranges) else len(existing)
+            block = existing[s:e]
+            first_nl = block.find("\n")
+            header_line = block if first_nl < 0 else block[:first_nl]
+            m_title = re.match(r"^##\s+(.+?)\s*$", header_line)
+            if not m_title:
+                continue
+            title = m_title.group(1).strip()
+            existing_sections.append((title, block))
+            existing_titles_set.add(title)
+
+        # 已有文件头：第一个 ## 之前（含 h1 与空行）
+        existing_head = existing[: existing_ranges[0]] if existing_ranges else existing
+
+        # 切新 output sections（同样 slice 到下一个 ## 起点）
+        new_section_blocks = []
+        for i, s in enumerate(new_ranges):
+            e = new_ranges[i + 1] if i + 1 < len(new_ranges) else len(new_output)
+            block = new_output[s:e]
+            first_nl = block.find("\n")
+            header_line = block if first_nl < 0 else block[:first_nl]
+            m_title = re.match(r"^##\s+(.+?)\s*$", header_line)
+            if not m_title:
+                continue
+            title = m_title.group(1).strip()
+            new_section_blocks.append((title, block))
+
+        # 拼装：
+        # - existing_sections 整体按出现顺序 emit（slice 已含分隔符，最后一节不含）
+        # - 新 section 仅在「已有 → 新」之间补一个 SEP（最后一节没有自带分隔符时）
+        # - 新 section 之间也用 SEP（与 new_output 一致：\n\n---\n\n）
+        SEP = "\n\n---\n\n"
+        parts = []
+        parts.append(existing_head)
+        kept = 0
+        appended = 0
+        for _title, block in existing_sections:
+            parts.append(block)
+            kept += 1
+        for title, block in new_section_blocks:
+            if title in existing_titles_set:
+                continue
+            parts.append(SEP)
+            parts.append(block)
+            existing_titles_set.add(title)
+            appended += 1
+
+        merged = "".join(parts)
+        # 合并模式：仅替换新生成 section 中的破折号；已有 section 字节级保留，
+        # 不重新规整，避免用户已手改的内容被改回去。
+        # 实现：新 section 的字符串里 `——` → `，` 已经在 new_output 中完成；
+        # merged = 已有 head + 已有 sections (字节级) + 新 sections (字节级，新生成时已 normalize)，
+        # 无需再统一 replace。
+        os.makedirs(os.path.dirname(args.output) or ".", exist_ok=True)
+        with open(args.output, "w", encoding="utf-8") as f:
+            f.write(merged)
+        print(
+            f"[json-to-md] 合并模式：{args.output}，保留 {kept} 个旧 section、"
+            f"追加 {appended} 个新 section（合并前新生成 {len(sections)} 个）",
+            file=sys.stderr,
+        )
+        return
+
+    output = new_output
 
     os.makedirs(os.path.dirname(args.output) or ".", exist_ok=True)
     with open(args.output, "w", encoding="utf-8") as f:

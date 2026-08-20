@@ -39,7 +39,7 @@
       "node_type": "agent",
       "agent_type": "novel-volume-outliner",
       "system_prompt_template": "",
-      "first_message": "运行卷大纲规划。目标卷号：{{volume_number}}。\n读取已有卷大纲（如有），对比目标卷号与已有最大卷号判断行为：\n- 目标卷号 > 最大已有卷号 → 创建新卷\n- 目标卷号 ≤ 最大已有卷号 → 重写该卷，以已有卷纲为参考，输出覆盖旧内容\n直接输出纯 JSON，引擎自动保存。\n\n==== 世界观基础 ====\n{{world_foundation_file}}\n\n==== 故事引擎 ====\n{{story_plan_file}}\n\n==== 角色档案 ====\n{{character_profiles_file}}\\n\\n==== 本书规模 ====\\n预计篇幅：{{estimated_length}}\\n每章字数：{{words_per_chapter}}\n\n==== 已有卷大纲 ====\n{{volume_outline_file}}",
+      "first_message": "运行卷大纲规划。目标卷号：{{volume_number}}。\n读取已有卷大纲（如有），对比目标卷号与已有最大卷号判断行为：\n- 目标卷号 > 最大已有卷号 → 创建新卷\n- 目标卷号 ≤ 最大已有卷号 → 重写该卷，以已有卷纲为参考，输出覆盖旧内容\n直接输出纯 JSON，引擎自动保存。\n\n==== 世界观基础 ====\n{{world_foundation_file}}\n\n==== 故事引擎 ====\n{{story_plan_file}}\n\n==== 角色档案 ====\n{{character_profiles_file}}\n\n==== 本书规模 ====\n预计篇幅：{{estimated_length}}\n每章字数：{{words_per_chapter}}\n\n==== 已有卷大纲 ====\n{{volume_outline_file}}\n\n==== 原著/设定偏离清单（仅同人书相关；写新卷时务必与已有偏离保持一致） ====\n{{canon_deviations_file}}",
       "position": {
         "x": 450,
         "y": 140
@@ -122,7 +122,7 @@
       "node_type": "agent",
       "agent_type": "novel-outliner",
       "system_prompt_template": "",
-      "first_message": "运行近期大纲规划。目标卷号：{{volume_number}}。\n读取卷纲确定章节范围，读取已有近纲确定进度。\n- 若目标卷的近纲尚不存在 → is_new_volume=true（覆盖写入）\n- 若目标卷的近纲已存在 → 重写模式：以卷纲为准重新规划，is_new_volume=true（覆盖写入）\n直接输出纯 JSON，引擎自动保存。\\n\\n==== 本书规模 ====\\n预计篇幅：{{estimated_length}}\\n每章字数：{{words_per_chapter}}\n\n==== 最新章节号 ====\n{{latest_chapter}}\n\n==== 最新卷大纲 ====\n{{volume_outline_file}}\n\n==== 已有近期大纲 ====\n{{near_term_outline_file}}\n\n==== 故事引擎 ====\n{{story_plan_file}}\n\n==== 角色档案 ====\n{{character_profiles_file}}\n\n==== 最新世界状态 ====\n{{latest_world_state}}\n\n==== 最新世界事件 ====\n{{latest_world_events}}\n\n==== 最新角色状态 ====\n{{latest_character_state}}",
+      "first_message": "运行近期大纲规划。目标卷号：{{volume_number}}。\n读取卷纲确定章节范围，读取已有近纲确定进度。\n- 若目标卷的近纲尚不存在 → is_new_volume=true（覆盖写入）\n- 若目标卷的近纲已存在 → 重写模式：以卷纲为准重新规划，is_new_volume=true（覆盖写入）\n直接输出纯 JSON，引擎自动保存。\\n\\n==== 本书规模 ====\\n预计篇幅：{{estimated_length}}\\n每章字数：{{words_per_chapter}}\n\n==== 最新章节号 ====\n{{latest_chapter}}\n\n==== 最新卷大纲 ====\n{{volume_outline_file}}\n\n==== 已有近期大纲 ====\n{{near_term_outline_file}}\n\n==== 故事引擎 ====\n{{story_plan_file}}\n\n==== 角色档案 ====\n{{character_profiles_file}}\n\n==== 角色轻卡（速查） ====\n{{character_light_cards_file}}\n\n==== 原著/设定偏离清单 ====\n{{canon_deviations_file}}\n\n==== 最新世界状态 ====\n{{latest_world_state}}\n\n==== 最新世界事件 ====\n{{latest_world_events}}\n\n==== 最新角色状态 ====\n{{latest_character_state}}",
       "position": {
         "x": 60,
         "y": 350
@@ -370,6 +370,30 @@
       "default": "meta/character_profiles.md",
       "required": false,
       "description": "",
+      "options": [],
+      "source_type": "input",
+      "source_node_id": "",
+      "hidden": true
+    },
+    {
+      "key": "character_light_cards_file",
+      "name": "角色轻卡",
+      "type": "file",
+      "default": "meta/character_light_cards.md",
+      "required": false,
+      "description": "maintainer 节点产出的全书角色轻量卡。文件不存在时变量为空字符串",
+      "options": [],
+      "source_type": "input",
+      "source_node_id": "",
+      "hidden": true
+    },
+    {
+      "key": "canon_deviations_file",
+      "name": "原著偏离清单",
+      "type": "file",
+      "default": "meta/canon_deviations.md",
+      "required": false,
+      "description": "character + post-hoc 追加的全书级偏离清单。文件不存在时变量为空字符串",
       "options": [],
       "source_type": "input",
       "source_node_id": "",
